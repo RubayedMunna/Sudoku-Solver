@@ -1,136 +1,160 @@
-#include<iostream>
+#include<bits/stdc++.h>
 using namespace std;
-#define N 9
-#define Unassigned 0   
-void printGrid(int ara[N][N])
+#define ll long long
+#define N '\n'
+#define Fast ios_base::sync_with_stdio(false); cin.tie(NULL);
+
+const ll maxn=9;
+
+ll arr[maxn][maxn];
+
+bool UsedInBox(ll &row,ll &col,ll num)
 {
-	
-	for(int i=0;i<N;i++)
-	{
-		if(i==0||i==3||i==6)
-		{
-			cout<<"-------------------------------"<<endl;
-		}
-		for(int j=0;j<N;j++)
-		{
-			if(j==0||j==3||j==6)
-			{
-				cout<<"|";
-			}
-			cout<<" "<<ara[i][j]<<" ";
-			if(j==8)
-			{
-				cout<<"|";
-			}
-		}
-		cout<<endl;
-		if(i==8)
-		{
-			cout<<"-------------------------------"<<endl;
-		}
-		
-	}
-	
-}                                                
-bool UsedInBox(int ara[N][N],int boxStartRow,int boxStartCol,int num)
-{
-	for(int row=0;row<3;row++)
-	{
-		for(int col=0;col<3;col++)
-		{
-			if(ara[row+boxStartRow][col+boxStartCol]==num)
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}                                                                    
-bool UsedInCol(int ara[N][N],int col,int num)                          
-{
-	for(int row=0;row<N;row++)
-	{
-		if(ara[row][col]==num)
-		{
-			return true;
-		}
-	}
-	return false;
-}                                                                     
-bool UsedInRow(int ara[N][N],int row,int num)                          
-{
-	for(int col=0;col<N;col++)
-	{
-		if(ara[row][col]==num)
-		{
-			return true;
-		}
-	}
-	return false;
-}                                                                     
-bool isSafe(int ara[N][N],int row,int col,int num)
-{
-	return !UsedInRow(ara,row,num)&&!UsedInCol(ara,col,num)&&!UsedInBox(ara,row-row%3,col-col%3,num)&&ara[row][col]==Unassigned;
-	
-}                                                                     
-bool FindUnassignedLocation(int ara[N][N],int& row,int& col)           
-{
-	for(row=0;row<N;row++)
-	{
-		for(col=0;col<N;col++)
-		{
-			if(ara[row][col]==Unassigned)
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}                                                                     
-bool SolveSudoku(int ara[N][N])
-{
-	int row,col;
-	if(!FindUnassignedLocation(ara,row,col))
-	{
-		return true;
-	}
-	for(int num=1;num<=9;num++)
-	{
-		if(isSafe(ara,row,col,num))
-		{
-			ara[row][col]=num;
-			if(SolveSudoku(ara))
-			{
-				return true;
-			}
-			ara[row][col]=Unassigned;
-		}
-	}
-	return false;
+    ll rowStart=row-row%3;
+    ll colStart=col-col%3;
+
+    for(ll i=0;i<3;i++)
+    {
+        for(ll j=0;j<3;j++)
+        {
+            if(arr[i+rowStart][j+colStart]==num)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
+
+bool UsedInCol(ll &col,ll &num)
+{
+    for(ll row=0;row<maxn;row++)
+    {
+        if(arr[row][col]==num)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool UsedInRow(ll &row,ll &num)
+{
+    for(ll col=0;col<maxn;col++)
+    {
+        if(arr[row][col]==num)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool isSafe(ll row,ll col,ll num)
+{
+    return UsedInRow(row,num)&&UsedInCol(col,num)&&UsedInBox(row,col,num);
+}
+
+bool FindUnassignedLocation(ll &row,ll &col)
+{
+    ll mn=10,cnt=0;
+
+    for(ll i=0;i<maxn;i++)
+    {
+        for(ll j=0;j<maxn;j++)
+        {
+            if(arr[i][j]==0)
+            {
+                ll cnt=0;
+                for(ll k=1;k<=9;k++)
+                {
+                    if(isSafe(i,j,k))
+                    {
+                        cnt++;
+                    }
+                }
+                if(cnt<mn)
+                {
+                    mn=cnt,row=i,col=j;
+                }
+            }
+        }
+    }
+
+    if(mn<10)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+ll SolveSudoku()
+{
+    ll row,col;
+    if(!FindUnassignedLocation(row,col))
+    {
+        return true;
+    }
+    for(ll num=1;num<=maxn;num++)
+    {
+        if(isSafe(row,col,num))
+        {
+            arr[row][col]=num;
+
+            if(SolveSudoku())
+            {
+                return true;
+            }
+            arr[row][col]=0;
+        }
+    }
+    return false;
+}
+
+void solve(ll tst)
+{
+
+    string str[9];
+    for(ll i=0;i<maxn;i++)cin>>str[i];
+
+    for(ll i=0;i<maxn;i++)
+    {
+        for(ll j=0;j<maxn;j++)
+        {
+            if(str[i][j]>='0'&&str[i][j]<='9')
+            {
+                arr[i][j]=str[i][j]-'0';
+            }
+            else
+            {
+                arr[i][j]=0;
+            }
+        }
+    }
+    SolveSudoku();
+    cout<<"Case "<<tst<<": "<<N;
+    for(ll i=0;i<maxn;i++)
+    {
+        for(ll j=0;j<maxn;j++)
+        {
+            cout<<arr[i][j];
+        }
+        cout<<N;
+    }
+}
+
 int main()
 {
-	freopen("in.txt","r",stdin);
-	int ara[N][N];
-	for(int i=0;i<N;i++)
-	{
-		for(int j=0;j<N;j++)
-		{
-			cin>>ara[i][j];
-		}
-	}
-	cout<<"The Given Sudoku Is: "<<endl;
-	printGrid(ara);
-	cout<<endl<<endl;
-	if(SolveSudoku(ara)==true)
-	{
-		cout<<"The Solution for The Given Sudoku: "<<endl<<endl;
-		printGrid(ara);
-		cout<<"Sudoku Solved!"<<endl;
-	}
-	else
-	{
-		cout<<"No Solution Exist!!"<<endl;
-	}
-	return 0;
+    Fast;
+    ll t=1;
+    cin>>t;
+    cin.ignore();
+    ll tst=0;
+    while(t--)
+    {
+        solve(++tst);
+    }
 }
