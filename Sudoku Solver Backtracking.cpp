@@ -118,6 +118,7 @@ void solve(ll tst)
 {
 
     string str[9];
+    cout<<"Enter The Sudoku: "<<N;
     for(ll i=0;i<maxn;i++)cin>>str[i];
 
     for(ll i=0;i<maxn;i++)
@@ -135,12 +136,36 @@ void solve(ll tst)
         }
     }
     SolveSudoku();
-    cout<<"Case "<<tst<<": "<<N;
+    cout<<"The Solution to the Sudoku is : "<<N;
     for(ll i=0;i<maxn;i++)
     {
+        if(i%3==0)
+        {
+            cout<<"-------------------------------"<<N;
+        }
         for(ll j=0;j<maxn;j++)
         {
-            cout<<arr[i][j];
+            if(j==0)
+            {
+                cout<<"| "<<arr[i][j]<<" ";
+            }
+            else if(j==8)
+            {
+                cout<<" "<<arr[i][j]<<" |"<<N;
+            }
+            else if(j%3==0)
+            {
+                cout<<"| "<<arr[i][j]<<" ";
+            }
+            else
+            {
+                cout<<" "<<arr[i][j]<<" ";
+            }
+
+        }
+        if(i==8)
+        {
+            cout<<"-------------------------------"<<N; continue;
         }
         cout<<N;
     }
@@ -148,13 +173,17 @@ void solve(ll tst)
 
 int main()
 {
-    Fast;
+    //Fast;
     ll t=1;
-    cin>>t;
-    cin.ignore();
+    //cin>>t;
+    //cin.ignore();
     ll tst=0;
     while(t--)
     {
         solve(++tst);
     }
 }
+
+
+
+
